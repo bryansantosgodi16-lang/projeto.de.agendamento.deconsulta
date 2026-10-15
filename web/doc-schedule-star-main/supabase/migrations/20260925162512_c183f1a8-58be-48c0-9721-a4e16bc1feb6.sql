@@ -1,0 +1,18 @@
+CREATE TABLE public.patients (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), owner_id uuid NOT NULL DEFAULT auth.uid(), full_name text NOT NULL CHECK (length(trim(full_name)) BETWEEN 2 AND 120), phone text NOT NULL CHECK (length(phone) BETWEEN 8 AND 30), cpf text NOT NULL CHECK (length(cpf) BETWEEN 11 AND 14), birth_date date, email text CHECK (email IS NULL OR length(email) <= 255), notes text CHECK (notes IS NULL OR length(notes) <= 2000), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(owner_id, cpf));
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.patients TO authenticated; GRANT ALL ON public.patients TO service_role;
+ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own patients" ON public.patients FOR ALL TO authenticated USING (owner_id = auth.uid()) WITH CHECK (owner_id = auth.uid());
+CREATE TABLE public.appointments (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), owner_id uuid NOT NULL DEFAULT auth.uid(), patient_id uuid NOT NULL REFERENCES public.patients(id), date date NOT NULL, time time NOT NULL, status text NOT NULL DEFAULT 'agendado' CHECK(status IN ('agendado','em atendimento','concluído','cancelado')), kind text NOT NULL DEFAULT 'consulta' CHECK(kind IN ('consulta','retorno')), cancellation_reason text CHECK(cancellation_reason IS NULL OR length(cancellation_reason) <= 500), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.appointments TO authenticated; GRANT ALL ON public.appointments TO service_role;
+ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own appointments" ON public.appointments FOR ALL TO authenticated USING (owner_id = auth.uid()) WITH CHECK (owner_id = auth.uid() AND EXISTS (SELECT 1 FROM public.patients p WHERE p.id = patient_id AND p.owner_id = auth.uid()));
+CREATE UNIQUE INDEX appointments_active_slot ON public.appointments(owner_id,date,time) WHERE status <> 'cancelado';
+CREATE INDEX appointments_patient_history ON public.appointments(patient_id,date DESC);
+CREATE TABLE public.schedule_settings (owner_id uuid PRIMARY KEY DEFAULT auth.uid(), start_time time NOT NULL DEFAULT '09:00', end_time time NOT NULL DEFAULT '18:00', interval_minutes integer NOT NULL DEFAULT 15 CHECK (interval_minutes IN (15,30,60)), updated_at timestamptz NOT NULL DEFAULT now(), CHECK (start_time < end_time));
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.schedule_settings TO authenticated; GRANT ALL ON public.schedule_settings TO service_role;
+ALTER TABLE public.schedule_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own schedule" ON public.schedule_settings FOR ALL TO authenticated USING (owner_id = auth.uid()) WITH CHECK (owner_id = auth.uid());
+CREATE OR REPLACE FUNCTION public.touch_updated_at() RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END $$;
+CREATE TRIGGER patients_updated BEFORE UPDATE ON public.patients FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();
+CREATE TRIGGER appointments_updated BEFORE UPDATE ON public.appointments FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();
+CREATE TRIGGER schedule_updated BEFORE UPDATE ON public.schedule_settings FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();
