@@ -1,4 +1,4 @@
-package com.projeto.projetoIntegradorGP8;
+package model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,22 +7,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 
 @Entity
-public class Pacientes {
+public class Configuracoes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nomePaciente;
+    private String horarioFuncionamento;
 
     @Column(nullable = false)
-    private String telefone;
+    private String intervaloDasConsultas;
 
     @Column(nullable = false)
-    private String convenio;
+    private String diasFuncionamento;
 
-    @Column(nullable = false)
-    private Integer consultasRealizadas;
+    @Column(nullable = true)
+    private String alteracoesDeFuncionamento;
 
 }

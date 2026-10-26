@@ -1,14 +1,18 @@
-package com.projeto.projetoIntegradorGP8;
+package model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
+
 @Entity
-public class CadastroPaciente {
+@Table(name = "pacientes")
+public class Pacientes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,18 +21,38 @@ public class CadastroPaciente {
     @Column(nullable = false)
     private String nomeCompleto;
 
+    private LocalDate dataNascimento;
+
+    private String endereco;
+
     @Column(nullable = false)
     private String telefone;
 
     @Column(nullable = false)
     private String convenio;
 
-    @Column(nullable = false)
-    private LocalDate dataNascimento;
+    private String naturalidade;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String estadoCivil;
 
-    @Column(nullable = true)
-    private String observacao;
+    private Integer consultasRealizadas;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
