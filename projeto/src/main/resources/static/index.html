@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#122c44" />
+    <meta name="description" content="Agenda e gestão de pacientes da Clínica VidaSaúde." />
+    <title>VidaSaúde | Agenda médica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/auth.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#agenda" aria-label="VidaSaúde, início"><span class="brand-mark">✚</span><span><strong>VidaSaúde</strong><small>Clínica Médica</small></span></a>
+        <nav class="nav-list" aria-label="Menu principal">
+          <button class="nav-link active" data-view="agenda"><span>▦</span>Agenda</button>
+          <button class="nav-link" data-view="pacientes"><span>♙</span>Pacientes</button>
+          <button class="nav-link" data-view="relatorios"><span>▥</span>Relatórios</button>
+          <button class="nav-link" data-view="canceladas"><span>⊗</span>Canceladas</button>
+          <button class="nav-link" data-view="configuracoes"><span>⚙</span>Configurações</button>
+        </nav>
+        <div class="sidebar-info"><div class="info-heading"><span>◷</span> Horário de funcionamento</div><p>Segunda a sexta</p><strong id="sidebar-hours">09:00 às 18:00</strong><hr /><small>♡ &nbsp;Cuidar de você é a nossa prioridade</small></div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar-title"><button class="icon-button menu-toggle" id="menu-toggle" aria-label="Abrir menu">☰</button><span id="topbar-label">Painel principal</span><strong class="mobile-brand">VidaSaúde</strong></div>
+          <div class="topbar-actions"><label class="search-box"><span>⌕</span><input id="global-search" type="search" placeholder="Buscar paciente por nome ou telefone" aria-label="Buscar paciente" /></label><span class="topbar-divider"></span><span class="user-avatar" aria-hidden="true">VS</span><span class="user-label"><strong>Equipe clínica</strong><small>Minha conta</small></span><button class="button secondary small logout-button" data-action="logout">Sair</button></div>
+        </header>
+        <main id="main" class="main-content" tabindex="-1"><div class="loading-state">Carregando dados da clínica…</div></main>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <dialog id="modal" class="modal"></dialog>
+  </body>
+</html>
