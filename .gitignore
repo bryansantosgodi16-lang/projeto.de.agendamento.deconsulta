@@ -1,0 +1,3 @@
+# Dependências Node em qualquer nível do repositório
+node_modules/
+**/node_modules/
